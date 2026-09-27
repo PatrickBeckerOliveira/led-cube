@@ -48,8 +48,8 @@ The sequence repeats until `OFF` is received. Animation updates use `millis()`, 
 ## Hardware Notes
 
 - Cube supply: 5 V, with a common ground shared with the ESP. The power supply's current rating does not determine the current capacity of the SuperMini's PCB traces.
-- GPIO8 and GPIO9 are boot strapping pins. The NPN base connections may interfere with startup, especially on GPIO9; initializing the outputs in firmware does not correct their levels during reset.
-- According to its datasheet, a TPIC6B595 powered at 5 V requires a minimum logic-high input of 0.85 × VCC = 4.25 V. Direct drive from 3.3 V GPIOs is not guaranteed; appropriate logic-level conversion should be provided.
+- GPIO8 and GPIO9 are boot strapping pins. The NPN base connections may interfere with startup, especially on GPIO9; using 10 kΩ resistors connected to the base showed no problems, lowering this value may cause issues.
+- According to its datasheet, a TPIC6B595 powered at 5 V requires a minimum logic-high input of 0.85 × VCC = 4.25 V. Direct drive from 3.3 V GPIOs works but is not guaranteed; logic-level conversion should be implemented in the future.
 - With 100 Ω column resistors and an LED forward voltage of approximately 3 V, the simplified estimate is 20 mA per LED and 320 mA for a full layer, plus the control electronics. Measure the actual current before sizing the power supply.
 
 References: [TPIC6B595 — TI](https://www.ti.com/lit/ds/symlink/tpic6b595.pdf), [ESP32-C3 Boot Mode Selection — Espressif](https://docs.espressif.com/projects/esptool/en/latest/esp32c3/advanced-topics/boot-mode-selection.html).
