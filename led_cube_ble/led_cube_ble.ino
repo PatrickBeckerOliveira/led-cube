@@ -4,7 +4,7 @@
 #include <BLEUtils.h>
 #include <atomic>
 
-// Pinos do circuito ESP32-C3 + dois TPIC6B595.
+// Circuit pins for the ESP32-C3 and two TPIC6B595 shift registers.
 constexpr uint8_t PIN_DATA = 4;
 constexpr uint8_t PIN_CLOCK = 5;
 constexpr uint8_t PIN_LATCH = 6;
@@ -20,7 +20,7 @@ std::atomic<int> pendingCommand{CMD_NONE};
 std::atomic<bool> restartAdvertising{false};
 bool cubeEnabled = false;
 
-// Um elemento por camada; cada bit corresponde a uma coluna.
+// One element per layer; each bit represents a column.
 uint16_t frame[4] = {0, 0, 0, 0};
 uint8_t scanLayer = 0;
 uint32_t lastScanUs = 0;
@@ -60,7 +60,7 @@ void refreshCube() {
   const uint32_t nowUs = micros();
   if (nowUs - lastScanUs < LAYER_TIME_US) return;
   lastScanUs = nowUs;
-  // Apaga antes de trocar a camada para evitar sobreposicao.
+  // Blank the outputs before switching layers to prevent overlap.
   disableLayers();
   setColumns(0);
   delayMicroseconds(BLANK_TIME_US);
@@ -81,7 +81,7 @@ void updateAnimation(uint32_t nowMs) {
   }
   uint32_t step;
   switch (effect) {
-    case 0: { // Camadas sobem e descem.
+    case 0: { // Layers move up and down.
       step = elapsed / 175;
       if (step == lastAnimationStep) return;
       lastAnimationStep = step;
@@ -90,7 +90,7 @@ void updateAnimation(uint32_t nowMs) {
       frame[sequence[step % 6]] = 0xFFFF;
       break;
     }
-    case 1: { // Coluna vertical percorre as 16 posicoes.
+    case 1: { // A vertical column moves through all 16 positions.
       step = elapsed / 150;
       if (step == lastAnimationStep) return;
       lastAnimationStep = step;
@@ -99,7 +99,7 @@ void updateAnimation(uint32_t nowMs) {
       for (uint8_t layer = 0; layer < 4; layer++) frame[layer] = mask;
       break;
     }
-    case 2: { // Oito pontos cintilando.
+    case 2: { // Eight twinkling points.
       step = elapsed / 100;
       if (step == lastAnimationStep) return;
       lastAnimationStep = step;
@@ -116,7 +116,7 @@ void updateAnimation(uint32_t nowMs) {
       }
       break;
     }
-    case 3: { // Preenche e esvazia o cubo.
+    case 3: { // Fill and empty the cube.
       step = elapsed / 200;
       if (step == lastAnimationStep) return;
       lastAnimationStep = step;
@@ -126,7 +126,7 @@ void updateAnimation(uint32_t nowMs) {
       for (uint8_t layer = 0; layer < count; layer++) frame[layer] = 0xFFFF;
       break;
     }
-    case 4: { // Tres flashes e uma pausa.
+    case 4: { // Three flashes followed by a pause.
       step = elapsed / 150;
       if (step == lastAnimationStep) return;
       lastAnimationStep = step;
